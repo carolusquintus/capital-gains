@@ -3,6 +3,7 @@ plugins {
 }
 
 group 'dev.stock'
+group 'dev.ex.stock'
 version '1.0-SNAPSHOT'
 
 repositories {
