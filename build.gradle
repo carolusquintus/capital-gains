@@ -1,9 +1,18 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 group 'dev.ex.stock'
 version '0.1'
+
+application {
+    mainClass = 'dev.ex.stock.infra.input.cli.CapitalGainsApp'
+}
+
+run {
+    standardInput = System.in
+}
 
 repositories {
     mavenCentral()
