@@ -1,7 +1,11 @@
 package dev.ex.stock.infra.input.cli;
 
+import dev.ex.stock.application.port.input.CapitalGainsInputPort;
+
 public class CapitalGainsCommand {
+
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        var useCase = new CapitalGainsInputPort();
+        System.out.println(useCase.calculateTaxes());
     }
 }
