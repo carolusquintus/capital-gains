@@ -1,13 +1,13 @@
 package dev.ex.stock.domain.service;
 
-import dev.ex.stock.domain.service.shared.StockService;
+import dev.ex.stock.domain.service.shared.Service;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public final class StockReader implements StockService<InputStream, String> {
+public final class StockReader implements Service<InputStream, List<String>> {
 
     @Override
     public List<String> process(InputStream input) {
