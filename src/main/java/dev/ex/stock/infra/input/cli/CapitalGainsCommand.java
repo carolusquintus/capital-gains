@@ -8,4 +8,5 @@ public class CapitalGainsCommand {
         var useCase = new CapitalGainsInputPort();
         System.out.println(useCase.calculateTaxes());
     }
+
 }
