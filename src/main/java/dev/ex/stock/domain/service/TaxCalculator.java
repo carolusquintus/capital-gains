@@ -26,7 +26,7 @@ public class TaxCalculator implements Service<List<List<Stock>>, List<List<Tax>>
     private List<Tax> calculateTaxes(List<Stock> stocks) {
         var taxes = new ArrayList<Tax>();
 
-        for (var stock: stocks) {
+        stocks.forEach(stock -> {
             switch (stock.operation()) {
                 case BUY -> taxes.add(ZERO_TAX);
                 case SELL -> {
@@ -35,7 +35,7 @@ public class TaxCalculator implements Service<List<List<Stock>>, List<List<Tax>>
                     }
                 }
             }
-        }
+        });
 
         return taxes;
     }
