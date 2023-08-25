@@ -13,4 +13,14 @@ public record Stock(
 
     Long quantity
 
-) {}
+) {
+
+    public BigDecimal totalAmount() {
+        return unitCost.multiply(new BigDecimal(quantity));
+    }
+
+    public boolean isLowerEqualTotalAmount(BigDecimal amount) {
+        return totalAmount().compareTo(amount) <= 0;
+    }
+
+}
