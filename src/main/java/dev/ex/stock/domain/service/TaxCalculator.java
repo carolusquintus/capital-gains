@@ -30,7 +30,7 @@ public class TaxCalculator implements Service<List<List<Stock>>, List<List<Tax>>
             switch (stock.operation()) {
                 case BUY -> taxes.add(ZERO_TAX);
                 case SELL -> {
-                    if (isLowerEqualTotalAmount(stock)) {
+                    if (stock.isLowerEqualTotalAmount(TOTAL_AMOUNT)) {
                         taxes.add(ZERO_TAX);
                     }
                 }
@@ -39,12 +39,5 @@ public class TaxCalculator implements Service<List<List<Stock>>, List<List<Tax>>
 
         return taxes;
     }
-
-    private boolean isLowerEqualTotalAmount(Stock stock) {
-        var totalAmountCalculated = stock.unitCost().multiply(new BigDecimal(stock.quantity()));
-        var comparisonResult = totalAmountCalculated.compareTo(TOTAL_AMOUNT);
-        return comparisonResult <= 0;
-    }
-
 
 }
