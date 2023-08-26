@@ -15,8 +15,12 @@ public record Stock(
 
 ) {
 
+    public BigDecimal quantityDecimal() {
+        return new BigDecimal(quantity);
+    }
+
     public BigDecimal totalAmount() {
-        return unitCost.multiply(new BigDecimal(quantity));
+        return unitCost.multiply(quantityDecimal());
     }
 
     public boolean isLowerEqualTotalAmount(BigDecimal amount) {
