@@ -30,15 +30,15 @@ public class TaxCalculator implements Service<List<List<Stock>>, List<List<Tax>>
 
         var totalStockQuantity = new BigDecimal("0.0");
         var weightedAveragePrice = new BigDecimal("0.0");
-        var currentBought = new Stock(BUY, new BigDecimal("0.0"), 0L);
+        var previousBuy = new Stock(BUY, new BigDecimal("0.0"), 0L);
 
         for (var stock : stocks) {
             switch (stock.operation()) {
                 case BUY -> {
                     taxes.add(ZERO_TAX);
                     totalStockQuantity = totalStockQuantity.add(stock.quantityDecimal());
-                    weightedAveragePrice = weightedAveragePrice(currentBought, stock);
-                    currentBought = stock;
+                    weightedAveragePrice = weightedAveragePrice(previousBuy, stock);
+                    previousBuy = stock;
                 }
                 case SELL -> {
                     if (stock.isLowerEqualTotalAmount(TOTAL_AMOUNT)) {
