@@ -73,9 +73,9 @@ public class TaxCalculator implements Service<List<List<Stock>>, List<List<Tax>>
         return newBuy;
     }
 
-    private BigDecimal calculateProfit(Stock stockSold, BigDecimal weightedAveragePrice) {
-        var totalAmount = stockSold.totalAmount();
-        var currentGain = stockSold.quantityDecimal().multiply(weightedAveragePrice);
+    private BigDecimal calculateProfit(Stock sell, BigDecimal weightedAveragePrice) {
+        var totalAmount = sell.totalAmount();
+        var currentGain = sell.quantityDecimal().multiply(weightedAveragePrice);
         return totalAmount.subtract(currentGain);
     }
 
@@ -90,12 +90,12 @@ public class TaxCalculator implements Service<List<List<Stock>>, List<List<Tax>>
         return quantity.compareTo(new BigDecimal("0.0")) == -1;
     }
 
-    private Tax calculateTax(Stock stock, BigDecimal weightedAveragePrice, BigDecimal profit, BigDecimal loss) {
-        if (stock.isLowerEqualTotalAmount(TOTAL_AMOUNT)) {
+    private Tax calculateTax(Stock sell, BigDecimal weightedAveragePrice, BigDecimal profit, BigDecimal loss) {
+        if (sell.isLowerEqualTotalAmount(TOTAL_AMOUNT)) {
             return ZERO_TAX;
         }
 
-        if (stock.unitCost().compareTo(weightedAveragePrice) == -1) {
+        if (sell.unitCost().compareTo(weightedAveragePrice) == -1) {
             return ZERO_TAX;
         }
 
