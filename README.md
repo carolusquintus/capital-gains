@@ -15,6 +15,14 @@ Thats why I decided to use Hexagonal Architecture and Domain Driven Design.\
     For the service package in particular is where business logic is applied.\
     And for this challenge I decided to apply Pipes and Filters pattern to process json input into different sequences to process every ouput, from previous step.
 
+## Libraries & frameworks used
+
+In order to achieve challenge expected goals:
+
+1. Libraries:\
+    `jackson`: To serialize and deserialize input and outputs from cli application.\
+    `vavr`: To manage exception handling through `Try.of()` in order to write simple code.
+
 ## Instructions to compile & run
 
 Open your Terminal and follow next steps.
