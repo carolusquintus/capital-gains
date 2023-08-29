@@ -22,6 +22,8 @@ In order to achieve challenge expected goals:
 1. Libraries:\
     `jackson`: To serialize and deserialize input and outputs from cli application.\
     `vavr`: To manage exception handling through `Try.of()` in order to write simple code.
+2. Frameworks:\
+    `spock`: To test code and ease coverage.
 
 ## Instructions to compile & run
 
