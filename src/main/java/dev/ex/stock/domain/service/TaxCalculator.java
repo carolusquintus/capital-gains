@@ -46,7 +46,7 @@ public class TaxCalculator implements Service<List<List<Stock>>, List<List<Tax>>
                         break;
                     }
                     totalStockQuantity = totalStockQuantity.subtract(stock.quantityDecimal());
-                    var profit = calculateProfit(stock, totalStockQuantity, weightedAveragePrice);
+                    var profit = calculateProfit(stock, weightedAveragePrice);
                     taxes.add(calculateTax(stock, weightedAveragePrice, profit));
                 }
             }
@@ -63,9 +63,8 @@ public class TaxCalculator implements Service<List<List<Stock>>, List<List<Tax>>
         return currentCalculus.add(newCalculus).divide(quantitySum, 2, FLOOR);
     }
 
-    private BigDecimal calculateProfit(Stock stockSold,
-                                       BigDecimal totalStockQuantity, BigDecimal weightedAveragePrice) {
-        return stockSold.totalAmount().subtract(totalStockQuantity.multiply(weightedAveragePrice));
+    private BigDecimal calculateProfit(Stock stockSold, BigDecimal weightedAveragePrice) {
+        return stockSold.totalAmount().subtract(stockSold.quantityDecimal().multiply(weightedAveragePrice));
     }
 
     private Tax calculateTax(Stock stock, BigDecimal weightedAveragePrice, BigDecimal profit) {
