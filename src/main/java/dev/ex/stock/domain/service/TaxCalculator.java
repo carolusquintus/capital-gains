@@ -28,26 +28,26 @@ public class TaxCalculator implements Service<List<List<Stock>>, List<List<Tax>>
     private List<Tax> calculateTaxes(List<Stock> stocks) {
         var taxes = new ArrayList<Tax>();
 
-        var totalStockQuantity = new BigDecimal("0.0");
+        var loss = new BigDecimal("0.0");
+        var totalStock = new BigDecimal("0.0");
         var weightedAveragePrice = new BigDecimal("0.0");
         var previousBuy = new Stock(BUY, new BigDecimal("0.0"), 0L);
 
         for (var stock : stocks) {
             switch (stock.operation()) {
                 case BUY -> {
+                    weightedAveragePrice = weightedAveragePrice(totalStock, weightedAveragePrice, stock);
+                    totalStock = totalStock.add(stock.quantityDecimal());
+                    previousBuy = getPreviousBuy(totalStock, previousBuy, stock);
                     taxes.add(ZERO_TAX);
-                    totalStockQuantity = totalStockQuantity.add(stock.quantityDecimal());
-                    weightedAveragePrice = weightedAveragePrice(previousBuy, stock);
-                    previousBuy = stock;
                 }
                 case SELL -> {
-                    if (stock.isLowerEqualTotalAmount(TOTAL_AMOUNT)) {
-                        taxes.add(ZERO_TAX);
-                        break;
-                    }
-                    totalStockQuantity = totalStockQuantity.subtract(stock.quantityDecimal());
+                    totalStock = totalStock.subtract(stock.quantityDecimal());
                     var profit = calculateProfit(stock, weightedAveragePrice);
-                    taxes.add(calculateTax(stock, weightedAveragePrice, profit));
+                    var tax = calculateTax(stock, weightedAveragePrice, profit, loss);
+                    loss = calculateLoss(loss, profit);
+                    previousBuy = getPreviousBuy(totalStock, previousBuy, stock);
+                    taxes.add(tax);
                 }
             }
         }
@@ -55,27 +55,57 @@ public class TaxCalculator implements Service<List<List<Stock>>, List<List<Tax>>
         return taxes;
     }
 
-    private BigDecimal weightedAveragePrice(Stock currentBought, Stock newBought) {
-        var currentCalculus = currentBought.quantityDecimal().multiply(currentBought.unitCost());
-        var newCalculus = newBought.quantityDecimal().multiply(newBought.unitCost());
-        var quantitySum = currentBought.quantityDecimal().add(newBought.quantityDecimal());
+    private BigDecimal weightedAveragePrice(BigDecimal totalStockQuantity, BigDecimal weightedAveragePrice, Stock newBuy) {
+        var currentCalculus = totalStockQuantity.multiply(weightedAveragePrice);
+        var newCalculus = newBuy.quantityDecimal().multiply(newBuy.unitCost());
+        var quantitySum = totalStockQuantity.add(newBuy.quantityDecimal());
 
         return currentCalculus.add(newCalculus).divide(quantitySum, 2, FLOOR);
     }
 
-    private BigDecimal calculateProfit(Stock stockSold, BigDecimal weightedAveragePrice) {
-        return stockSold.totalAmount().subtract(stockSold.quantityDecimal().multiply(weightedAveragePrice));
+    private Stock getPreviousBuy(BigDecimal totalStock, Stock previousBuy, Stock newBuy) {
+        if (totalStock.compareTo(new BigDecimal("0.0")) == 0) {
+            return new Stock(BUY, new BigDecimal("0.0"), 0L);
+        }
+        if (SELL.equals(newBuy.operation())) {
+            return previousBuy;
+        }
+        return newBuy;
     }
 
-    private Tax calculateTax(Stock stock, BigDecimal weightedAveragePrice, BigDecimal profit) {
+    private BigDecimal calculateProfit(Stock stockSold, BigDecimal weightedAveragePrice) {
+        var totalAmount = stockSold.totalAmount();
+        var currentGain = stockSold.quantityDecimal().multiply(weightedAveragePrice);
+        return totalAmount.subtract(currentGain);
+    }
+
+    private BigDecimal calculateLoss(BigDecimal loss, BigDecimal profit) {
+        if (isLoss(loss) || isLoss(profit)) {
+            return loss.add(profit);
+        }
+        return loss;
+    }
+
+    private boolean isLoss(BigDecimal quantity) {
+        return quantity.compareTo(new BigDecimal("0.0")) == -1;
+    }
+
+    private Tax calculateTax(Stock stock, BigDecimal weightedAveragePrice, BigDecimal profit, BigDecimal loss) {
+        if (stock.isLowerEqualTotalAmount(TOTAL_AMOUNT)) {
+            return ZERO_TAX;
+        }
+
         if (stock.unitCost().compareTo(weightedAveragePrice) == -1) {
             return ZERO_TAX;
         }
-        if (profit.compareTo(TOTAL_AMOUNT) == 1) {
-            return new Tax(profit.multiply(PERCENTAGE_TAX).setScale(2, FLOOR));
-        }
-        return ZERO_TAX;
-    }
 
+        var calculatedProfit = profit.add(loss);
+
+        if (isLoss(calculatedProfit)) {
+            return ZERO_TAX;
+        }
+
+        return new Tax(calculatedProfit.multiply(PERCENTAGE_TAX).setScale(2, FLOOR));
+    }
 
 }
