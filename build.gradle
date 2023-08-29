@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'groovy'
     id 'application'
+    id 'jacoco'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
@@ -29,5 +30,9 @@ dependencies {
 }
 
 test {
+    finalizedBy jacocoTestReport // report is always generated after tests run
     useJUnitPlatform()
+}
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
 }
