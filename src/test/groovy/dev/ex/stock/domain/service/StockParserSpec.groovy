@@ -45,4 +45,5 @@ class StockParserSpec extends Specification {
         result[1].size() == 3
         result[2].size() == 4
     }
+
 }
