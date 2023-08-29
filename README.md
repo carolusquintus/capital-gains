@@ -74,3 +74,28 @@ chmod u+x capital-gains
 ./capital-gains < input3.txt
 ```
 ![chmod](screenshots/23-ago-2023_22-27-43.png)
+
+## Instruction to run test
+
+This project uses `JaCoCo`(Java Code Coverage) plugin to generate html test reports.
+
+1. Run and generate test reports.
+```shell
+./gradlew test
+```
+![gradlew test](screenshots/29-ago-2023_11-26-35.png)
+
+2. Go to and locate `index.html` files and open them in your browser.
+    1. For Test Summary report go to.
+    ```shell
+   capital-gains/build/reports/tests/test/index.html
+    ```
+   ![test-summary index.html](screenshots/29-ago-2023_11-27-39.png)
+   ![test-summary index.html opened](screenshots/29-ago-2023_11-28-16.png)
+
+    2. For JaCoCo report go to.
+    ```shell
+   capital-gains/build/reports/jacoco/test/html/index.html
+    ```
+   ![jacoco index.html](screenshots/29-ago-2023_11-28-59.png)
+   ![jacoco index.html opened](screenshots/29-ago-2023_11-29-29.png)
