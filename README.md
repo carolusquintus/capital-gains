@@ -1,5 +1,20 @@
 # capital-gains
 
+## Technical & architectural decisions
+
+One of the main ideas when starting this challenge was to keep business logic separated and isolated.\
+Thats why I decided to use Hexagonal Architecture and Domain Driven Design.\
+
+1. Infrastructure (Framework) hexagon:\
+    Provides the outside world interface. For this challenge in particular is exposed through a cli interface (adapter).\
+    If necessary we can add output adapters (DB, cache, file) or add/replace input adapters (gRPC, REST, SOAP).
+2. Application hexagon:\
+    It is where business rules are processed and orchestrated, serving as a middleman to work between Infrastructure and Domain hexagon.
+3. Domain hexagon:\
+    We define the value objects (immutable) and entities (not used for this challenge) for describing the capital gains problems.\
+    For the service package in particular is where business logic is applied.\
+    And for this challenge I decided to apply Pipes and Filters pattern to process json input into different sequences to process every ouput, from previous step.
+
 ## Instructions to compile & run
 
 Open your Terminal and follow next steps.
