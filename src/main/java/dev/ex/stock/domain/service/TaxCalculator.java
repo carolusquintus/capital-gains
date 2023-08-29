@@ -1,18 +1,15 @@
 package dev.ex.stock.domain.service;
 
-import dev.ex.stock.domain.entity.Operation;
 import dev.ex.stock.domain.entity.Stock;
 import dev.ex.stock.domain.entity.Tax;
 import dev.ex.stock.domain.service.shared.Service;
 
-import javax.xml.stream.XMLEventReader;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
 import static dev.ex.stock.domain.entity.Operation.*;
-import static java.math.RoundingMode.CEILING;
+import static java.math.RoundingMode.FLOOR;
 
 public class TaxCalculator implements Service<List<List<Stock>>, List<List<Tax>>> {
 
@@ -63,7 +60,7 @@ public class TaxCalculator implements Service<List<List<Stock>>, List<List<Tax>>
         var newCalculus = newBought.quantityDecimal().multiply(newBought.unitCost());
         var quantitySum = currentBought.quantityDecimal().add(newBought.quantityDecimal());
 
-        return currentCalculus.add(newCalculus).divide(quantitySum);
+        return currentCalculus.add(newCalculus).divide(quantitySum, 2, FLOOR);
     }
 
     private BigDecimal calculateProfit(Stock stockSold,
@@ -76,7 +73,7 @@ public class TaxCalculator implements Service<List<List<Stock>>, List<List<Tax>>
             return ZERO_TAX;
         }
         if (profit.compareTo(TOTAL_AMOUNT) == 1) {
-            return new Tax(profit.multiply(PERCENTAGE_TAX).setScale(2, CEILING));
+            return new Tax(profit.multiply(PERCENTAGE_TAX).setScale(2, FLOOR));
         }
         return ZERO_TAX;
     }
